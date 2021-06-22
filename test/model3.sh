@@ -1,0 +1,2 @@
+python test.py --img_height 192 --img_width 256 --train_data_dir ~/dataset/DAVID/train --test_data_dir ~/dataset/DAVID/test \
+--log_dir ./output/test/model3 --checkpoint ./output/train/model3/model_epoch19.pth
