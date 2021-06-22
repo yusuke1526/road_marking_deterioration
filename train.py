@@ -11,7 +11,7 @@ from torch.utils.tensorboard import SummaryWriter
 from sklearn.metrics import precision_score, recall_score, f1_score
 from unet import UNet
 import numpy as np
-from dataset import MyDataset
+from dataset import MyDataset, DAVIDDataset
 from torch.utils.data import DataLoader
 import cv2
 import argparse
@@ -35,21 +35,32 @@ def dataset():
         transforms.ToTensor(),
         transforms.Resize([args.img_height, args.img_width]),
     ])
-
-    train_dataset = MyDataset(
-        data_dir=args.train_data_dir,
-        img_dir=args.img_dir,
-        mask_dir=args.mask_dir,
-        transform1=transform1,
-        transform2=transform2,
-    )
-    test_dataset = MyDataset(
-        data_dir=args.test_data_dir,
-        img_dir=args.img_dir,
-        mask_dir=args.mask_dir,
-        transform1=transform1,
-        transform2=transform2,
-    )
+    if args.dataset == 'semantic_segmentation_for_self_driving_cars':
+        train_dataset = MyDataset(
+            data_dir=args.train_data_dir,
+            img_dir=args.img_dir,
+            mask_dir=args.mask_dir,
+            transform1=transform1,
+            transform2=transform2,
+        )
+        test_dataset = MyDataset(
+            data_dir=args.test_data_dir,
+            img_dir=args.img_dir,
+            mask_dir=args.mask_dir,
+            transform1=transform1,
+            transform2=transform2,
+        )
+    elif args.dataset == 'DAVID':
+        train_dataset = DAVIDDataset(
+            data_dir=args.train_data_dir,
+            transform1=transform1,
+            transform2=transform2,
+        )
+        test_dataset = DAVIDDataset(
+            data_dir=args.test_data_dir,
+            transform1=transform1,
+            transform2=transform2,
+        )
     return train_dataset, test_dataset
 
 def init_model():
@@ -160,6 +171,7 @@ if __name__ == '__main__':
     # Optimizer
     parser.add_argument("--learning_rate", '-lr', type=float, default=1e-4)
 
+    parser.add_argument("--dataset", type=str, default='DAVID', choices=["DAVID", "semantic_segmentation_for_self_driving_cars"])
     parser.add_argument("--train_data_dir", default='./data/dataA/dataA/')
     parser.add_argument("--test_data_dir", default='./data/dataB/dataB/')
     parser.add_argument("--img_dir", default='CameraRGB')
