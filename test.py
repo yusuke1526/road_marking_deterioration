@@ -34,6 +34,7 @@ def dataset():
     transform2 = transforms.Compose([
         transforms.ToTensor(),
         transforms.Resize([args.img_height, args.img_width]),
+        lambda x: x>0.5,
     ])
     if args.dataset == 'semantic_segmentation_for_self_driving_cars':
         train_dataset = MyDataset(
